@@ -1,7 +1,7 @@
 function startApp() {
     showView('viewHome');
 
-    // Bind the navigation menu links
+    //    Bind the navigation menu links
     $("#linkHome").click(showHomeView);
     $("#linkLogin").click(showLoginView);
     $("#linkRegister").click(showRegisterView);
