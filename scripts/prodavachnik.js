@@ -189,6 +189,7 @@ function startApp() {
         $('#viewDetailsAd').empty();
 
         function displayAdvertSuccess(advert) {
+			
             let advertInfo = $('<div>').append(
                 $('<img>').attr("src", advert.image),
                 $('<br>'),
@@ -203,7 +204,7 @@ function startApp() {
 
             $('#viewDetailsAd').append(advertInfo);
 
-            showView('viewDetailsAd');
+             showView('viewDetailsAd');
         }
     }
 
