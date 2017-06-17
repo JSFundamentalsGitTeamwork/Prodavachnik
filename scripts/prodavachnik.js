@@ -13,8 +13,21 @@ function startApp() {
 	// Bind the form submit buttons
     $("#buttonLoginUser").click(loginUser);
     $("#buttonRegisterUser").click(registerUser);
-	$("#buttonCreateAd").click(createAdvert);
+
+	  $("#buttonCreateAd").click(createAdvert);
     $("#buttonEditAd").click(editAdvert);
+
+	
+	// Bind the info / error boxes
+     $("#infoBox, #errorBox").click(function() {       
+      $(this).fadeOut();
+    });
+
+    // Attach AJAX "loading" event listener
+    $(document).on({
+        ajaxStart: function() { $("#loadingBox").show() },
+        ajaxStop: function() { $("#loadingBox").hide() }
+
 
     const kinveyBaseUrl = "https://mock.api.com/";
     const kinveyAppKey = "kid_rk";
@@ -44,6 +57,28 @@ function startApp() {
 			$("#linkCreateAd").show();
             $("#linkLogout").show();
         }
+    }
+	
+	function showInfo(message) {
+        $('#infoBox').text(message);
+        $('#infoBox').show();
+        setTimeout(function() {
+            $('#infoBox').fadeOut();
+        }, 3000);
+    }
+
+    function showError(errorMsg) {
+        $('#errorBox').text("Error: " + errorMsg);
+        $('#errorBox').show();
+    }
+
+    function handleAjaxError(response) {
+        let errorMsg = JSON.stringify(response);
+        if (response.readyState === 0)
+            errorMsg = "Cannot connect due to network error.";
+        if (response.responseJSON && response.responseJSON.description)
+            errorMsg = response.responseJSON.description;
+        showError(errorMsg);
     }
 
     function showHomeView() {
@@ -81,13 +116,15 @@ function startApp() {
             url: kinveyLoginUrl,
             headers: kinveyAuthHeaders,
             data: userData,
-            success: loginSuccess
+            success: loginSuccess,
+            error: handleAjaxError
         });
 
         function loginSuccess(userInfo) {
             saveAuthInSession(userInfo);
             showHideMenuLinks();
             listAdverts();
+			showInfo('Login successful.');
         }
     }
 
@@ -115,7 +152,8 @@ function startApp() {
             url: kinveyRegisterUrl,
             headers: kinveyAuthHeaders,
             data: userData,
-            success: registerSuccess
+            success: registerSuccess,
+            error: handleAjaxError
         });
 
         function registerSuccess(userInfo) {
@@ -123,6 +161,7 @@ function startApp() {
             saveAuthInSession(userInfo);
             showHideMenuLinks();
             listAdverts();
+			showInfo('User registration successful.');
         }
     }
 
@@ -132,6 +171,7 @@ function startApp() {
         $('#loggedInUser').text("");
         showHideMenuLinks();
         showHomeView();
+		showInfo('Logout successful.');
     }
 
     // advertisement/all
@@ -147,10 +187,12 @@ function startApp() {
             method: "GET",
             url: kinveyAdvertsUrl,
             headers: kinveyAuthHeaders,
-            success: loadAdvertsSuccess
+            success: loadAdvertsSuccess,
+            error: handleAjaxError
         });
 
         function loadAdvertsSuccess(adverts) {
+			showInfo('Advertisements loaded.');
             if (adverts.length === 0) {
                 $('#ads').text('No advertisements available.');
             } else {
