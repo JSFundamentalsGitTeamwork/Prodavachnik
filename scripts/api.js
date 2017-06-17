@@ -49,7 +49,7 @@
         }
     });
 
-    // User create
+    //   User create
     $.mockjax(function (requestSettings) {
         if (requestSettings.url === "https://mock.backend.com/user/kid_rk/" &&
             requestSettings.method === "POST") {
